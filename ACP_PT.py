@@ -20,7 +20,7 @@ X = df.iloc[:,0:12]
 # la submatriz x contiene los valores de las primeras 12 columnas del dataframe y todas las filas
 y = df.iloc[:,12].values
 # El vector y contiene los valores de la 12 columna (paciente) para todas las filas
-print(y)
+
 n = len(X.columns)                       #Contar columnas
 m = len(list(csv.reader(open(data))))    #Contar filas
 
@@ -82,11 +82,10 @@ fd = pd.DataFrame(fd.tolist())
 fig2, axx = plt.subplots()
 axx.axhline(0, color='black')
 axx.axvline(0, color='black')
-#axx.scatter(fd[0], fd[1], color='red')
 axx.scatter(fd[0], fd[1], color='red')
+#ID de cada paciente
 for i, txt in enumerate(y):
     axx.annotate(txt, (fd[0][i], fd[1][i]))
-    
 plt.grid()
 plt.ylabel('CP2')
 plt.xlabel('CP1')
