@@ -11,18 +11,19 @@ import csv
 
 #Carga de datos
 #Abrir el archivo .csv 
-data = r'C:\Users\aleja\Documents\UPIITA\Proyecto Terminal\PT_I\Dr_Chanona\MS_Men.csv'
-df = pd.read_csv(data, names = ['Vegetables','Fruits','Cereals','Legumes','ASF','Milks','Oils and fats',
-                                'Sugars','Alcoholic drinks','Others','Saucers','Fast food','ID'])
+data = r'C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\ACP.csv'
+df = pd.read_csv(data, names = ['Aceites y grasas','Alimentos de origen animal',
+                                'Azucares','Bebidas','Cereales','Comida mexicana',
+                                'Frutas','Leches','Legumbres','Verduras','ID'])
+
+n = len(df.columns)                      #Contar columnas
+m = len(list(csv.reader(open(data))))    #Contar filas
 
 # Se divide la matriz del dataset en dos partes
-X = df.iloc[:,0:12]
-# la submatriz x contiene los valores de las primeras 12 columnas del dataframe y todas las filas
-y = df.iloc[:,12].values
-# El vector y contiene los valores de la 12 columna (paciente) para todas las filas
-
-n = len(X.columns)                       #Contar columnas
-m = len(list(csv.reader(open(data))))    #Contar filas
+X = df.iloc[:,0:n-1]
+# la submatriz x contiene los valores de las primeras 10 columnas del dataframe y todas las filas
+y = df.iloc[:,n-1].values
+# El vector y contiene los valores de la 11a columna (paciente) para todas las filas
 
 #Normalizacion de los valores
 df_ = X - X.mean()
@@ -39,10 +40,10 @@ eig_par = [(np.abs(eigenvalores[i]), eigenvectores[:,i]) for i in range(len(eige
 # Orden de las tuplas (eigenvalor, eigenvector) de mayor a menor
 eig_par.sort(key=lambda x: x[0], reverse=True)
 
-# Lista de eigenvalores en orden descendiente y formacion del FeatureVector
-for i in eig_par:
-    print(i[0])
-    #print(i[1])
+## Lista de eigenvalores en orden descendiente y formacion del FeatureVector
+#for i in eig_par:
+#    print(i[0])
+#    print(i[1])
 
 #A partir de los valores propios, calculamos la varianza explicada
 tot = sum(eigenvalores)
@@ -54,21 +55,22 @@ with plt.style.context('seaborn-pastel'):
     fig, ax1 = plt.subplots()
     ax1.set_ylabel('Valor propio')
     ax1.set_xlabel('Componentes Principales')
-    ax1.bar(range(n), eigenvalores/100, alpha=0.5, align='center',
+    ax1.bar(range(n-1), eigenvalores/10, alpha=0.5, align='center',
             label='Contribucion del componente', color='g')
     ax1.tick_params(axis='y')
     #Instancia un segundo eje que comparte al eje x
     ax2 = ax1.twinx()
-    ax2.plot(range(n), sum_var_exp, 'o-', label='Varianza acumulada (%)')
+    ax2.plot(range(n-1), sum_var_exp, 'o-', label='Varianza acumulada (%)')
     ax2.set_ylabel('Porcentaje de Varianza Explicada')
     ax2.set_xlabel('Componentes Principales')
     ax2.tick_params(axis='y')
+    plt.savefig('CP.jpg')
     plt.legend(loc='best')
     plt.tight_layout()
-    plt.savefig('Componentes_Principales.jpg')
+
     
 #Creamos el FeatureVector = [eig1, eig2, ...]
-fv = np.hstack((eig_par[0][1].reshape(n, 1), eig_par[1][1].reshape(n, 1)))
+fv = np.hstack((eig_par[0][1].reshape(n-1, 1), eig_par[1][1].reshape(n-1, 1)))
 
 #Calculo de los datos finales, FinalData = RowFeatureVector x RowDataAdjust
 rfv = np.transpose(fv)
@@ -78,7 +80,6 @@ fd = np.transpose(fd)
 fd = pd.DataFrame(fd.tolist())
 
 # Grafica de datos finales
-#fig=plt.figure(2)
 fig2, axx = plt.subplots()
 axx.axhline(0, color='black')
 axx.axvline(0, color='black')
@@ -89,6 +90,6 @@ for i, txt in enumerate(y):
 plt.grid()
 plt.ylabel('CP2')
 plt.xlabel('CP1')
-plt.show()
-fig2.savefig('ACP.jpg')
+fig2.savefig('PCA.jpg')
+
  
